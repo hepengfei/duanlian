@@ -1,0 +1,7 @@
+name: duanlian
+version: 1
+worker: wsgi
+handle:
+- compress:  if ( out_header["Content-type"] ~ "image/jpeg" ) compress
+- compress:  if ( out_header["Content-type"] ~ "image/png" ) compress
+- compress:  if ( out_header["Content-type"] ~ "image/gif" ) compress
