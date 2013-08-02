@@ -16,3 +16,8 @@ curl -sv -X POST http://127.0.0.1/api/new --data-binary 'http://www.cnblogs.com/
 a40bdc0
 
 curl -sv -X GET http://127.0.0.1/a40bdc0
+
+* 待办
+- [ ] 完成自动化测试脚本
+- [ ] 完成自动化更新配置并重启所有相关服务的脚本
+
