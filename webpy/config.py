@@ -10,7 +10,7 @@ USERURLKEY_MAP="[a-zA-Z0-9-]"
 
 import baseany
 
-BASE32_MAP="3uyw8a9bdcegfxzh4ikjmnpq6s5r7tv2"
+BASE32_MAP="5f6stacpb4zjeh27kmux38wr9gydviqn"
 BASE32=baseany.new(BASE32_MAP)
 
 
