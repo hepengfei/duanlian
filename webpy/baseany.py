@@ -74,9 +74,12 @@ base32 = new(base32map)
 def test_one(baseany, number):
     string = baseany.ntos(number)
     n2 = baseany.ston(string)
+    print "%d => %s" % (n2, string)
     assert(number == n2)
 
-number_to_test = (0, 1, 9, 10, 42, 43, 51, 99, 255, 999, 1232, 3123, 323123, 1233123123, 3123133123,347887856457)
+number_to_test = (0, 1, 9, 10, 42, 43, 51, 99,
+                  255, 999, 1232, 3123, 323123, 43902349,
+                  123312312, 312313312,34788785645)
 
 def test(baseany, number_array = number_to_test):
  for n in number_array:
