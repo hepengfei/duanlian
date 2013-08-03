@@ -36,14 +36,14 @@ def urlid_new():
 
 # TODO: 没有处理key重复的情况，概率很小；重复时返回已存在，创建失败
 def url_new(url, urlkey=None):
-    ret, urlid = urlid_new()
-    if ret != 0 or urlid == 0:
-        return ret, 0, None
     try:
         if urlkey is None:
+            ret, urlid = urlid_new()
+            if ret != 0 or urlid == 0:
+                return ret, 0, None
             urlkey=utils.idtostr(urlid)
-        db.insert('url', seqname='urlid',
-                  urlid=urlid, urlkey=urlkey, url=url,
+        db.insert('url', seqname=False,
+                  urlkey=urlkey, url=url,
                   dt_created=web.SQLLiteral("NOW()"))
         return 0, 1, urlkey
     except MySQLdb.IntegrityError as err:

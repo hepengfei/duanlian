@@ -7,13 +7,11 @@ use duanlian;
 
 create table url
 (
-        urlid bigint unsigned not null,
         urlkey char(24) not null,
         url text not null,
         dt_created datetime not null,
 
-        primary key (urlid),
-        unique key (urlkey)
+        primary key (urlkey)
 ) character set = utf8 collate = utf8_bin;
 
 create table urlid
