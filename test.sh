@@ -24,6 +24,16 @@ function get_redirect()
     grep '^< Location:' | sed 's/\r//g' | cut -d ' ' -f 3
 }
 
+function get_http_code()
+{
+    grep '^< HTTP' | cut -d ' ' -f 3
+}
+
+function get_stat_numpv()
+{
+    grep '^{"'|sed 's/[{":,}]//g'|cut -d' ' -f2
+}
+
 function test()
 {
     local url="$1"
@@ -41,10 +51,24 @@ function test()
         return 1
     fi
 
+    stat_http_code=`request GET "/api/stat/$key" | get_http_code`
+    if [ "$stat_http_code" != "404" ]; then
+        echo "stat fail on url: $url => $key -> $stat_http_code"
+        return 1
+    fi
+
     redirect=`request GET "/$key"|get_redirect`
 
     if [ "$url" != "$redirect" ]; then
         echo "redirect fail on url: $url => $redirect"
+        return 1
+    fi
+
+    request GET "/$key" > /dev/null
+    request GET "/$key" > /dev/null
+    stat_numpv=`request GET "api/stat/$key" | get_stat_numpv`
+    if [ "$stat_numpv" != "3" ]; then
+        echo "stat fail on url: $url => $key -> $stat_numpv"
         return 1
     fi
 

@@ -54,10 +54,26 @@ def url_new(url, urlkey=None):
 def url_get(urlkey):
     try:
         results = db.select('url', where='urlkey=$urlkey', vars=locals())
+        if len(results) > 0:
+            return 0, results[0].url
+        else:
+            return 0, None
     except MySQLdb.Error as err:
         return get_errno(err), None
-    if len(results) > 0:
-        return 0, results[0].url
-    else:
-        return 0, None
 
+def urlstat_total_incpv(urlkey):
+    try:
+        db.query("insert into urlstat_total set urlkey=$urlkey, numpv=1, dtlast=Now() on duplicate key update numpv=numpv+1, dtlast=Now()", vars=locals())
+        return 0
+    except MySQLdb.Error as err:
+        return get_errno(err)
+
+def urlstat_total_get(urlkey):
+    try:
+        results = db.select('urlstat_total', where='urlkey=$urlkey', vars=locals())
+        if len(results) > 0:
+            return 0, results[0]
+        else:
+            return 0, None
+    except MySQLdb.Error as err:
+        return get_errno(err), None

@@ -7,16 +7,5 @@
 1. 短链生成
 2. 重定向跳转
 
-* 要点
-1. 生成短链时，key重复，则认为url相等，没做处理，直接返回成功。以后key
-   支持手动改就会有问题了。
 
-* 测试命令
-curl -sv -X POST http://127.0.0.1/api/new --data-binary 'http://www.cnblogs.com/awpatp/archive/2012/08/29/2662091.html'
-a40bdc0
-
-curl -sv -X GET http://127.0.0.1/a40bdc0
-
-* 待办
-- [ ] 完成自动化更新配置并重启所有相关服务的脚本
 

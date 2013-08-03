@@ -12,6 +12,7 @@ urls = (
     '/api/new', 'api.UrlNew',
     '/api/new/([a-zA-Z0-9-]+)$', 'api.UrlNew',
     '/([0-9a-zA-Z]+)', 'api.UrlRedirect',
+    '/api/stat/([0-9a-zA-Z]+)', 'api.UrlStat',
 )
 
 class UrlNew:
@@ -59,5 +60,28 @@ class UrlRedirect:
         if url is None:
             return web.notfound("")
 
+        # update stats
+        model.urlstat_total_incpv(urlkey)
+
         return web.redirect(url)
+
+class UrlStat:
+    def GET(self, urlkey):
+        if len(urlkey) > config.MAX_LEN_URLKEY:
+            web.ctx.status="400 Bad request"
+            return "key too long"
+
+        ret, stat=model.urlstat_total_get(str(urlkey))
+        if ret != 0:
+            return web.internalerror("db error")
+
+        if stat is None:
+            return web.notfound("")
+
+        stat_info={
+            "key" : stat.urlkey,
+            "numpv" : stat.numpv,
+            "dtlast" : stat.dtlast.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        return json.dumps(stat_info)
 
