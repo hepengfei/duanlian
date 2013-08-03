@@ -4,7 +4,14 @@ web.DEBUG=True
 
 MAX_LEN_URL=4096
 MAX_LEN_URLKEY=64
+MIN_LEN_USERURLKEY=5
 
+USERURLKEY_MAP="[a-zA-Z0-9-]"
+
+import baseany
+
+BASE32_MAP="3uyw8a9bdcegfxzh4ikjmnpq6s5r7tv2"
+BASE32=baseany.new(BASE32_MAP)
 
 
 using_sae=True

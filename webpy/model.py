@@ -4,6 +4,7 @@ import web
 import MySQLdb
 
 import config
+import utils
 
 
 db = web.database(dbn='mysql',
@@ -23,16 +24,32 @@ def get_errno(err):
         pass
     return errno
 
-
-def url_new(urlkey, url):
+def urlid_new():
     try:
-        db.insert('url', urlkey=urlkey, url=url)
+        db.query('delete from urlid')
+        urlid = db.insert('urlid', seqname='urlid', urlid=0)
+        return 0, urlid
     except MySQLdb.IntegrityError as err:
         return 0, 0
     except MySQLdb.Error as err:
         return get_errno(err), 0
-    return 0, 1
 
+# TODO: 没有处理key重复的情况，概率很小；重复时返回已存在，创建失败
+def url_new(url, urlkey=None):
+    ret, urlid = urlid_new()
+    if ret != 0 or urlid == 0:
+        return ret, 0, None
+    try:
+        if urlkey is None:
+            urlkey=utils.idtostr(urlid)
+        db.insert('url', seqname='urlid',
+                  urlid=urlid, urlkey=urlkey, url=url,
+                  dt_created=web.SQLLiteral("NOW()"))
+        return 0, 1, urlkey
+    except MySQLdb.IntegrityError as err:
+        return 0, 0, None
+    except MySQLdb.Error as err:
+        return get_errno(err), 0, None
 
 def url_get(urlkey):
     try:

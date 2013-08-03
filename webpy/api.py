@@ -10,28 +10,41 @@ import config
 
 urls = (
     '/api/new', 'api.UrlNew',
+    '/api/new/([a-zA-Z0-9-]+)$', 'api.UrlNew',
     '/([0-9a-zA-Z]+)', 'api.UrlRedirect',
 )
 
 class UrlNew:
-    def POST(self):
+    def POST(self, userurlkey=None):
         url=web.data()
         if len(url) > config.MAX_LEN_URL:
             web.ctx.status="400 Bad request"
             return "url too long"
+        if userurlkey is not None:
+            print userurlkey
+            if len(userurlkey) < config.MIN_LEN_USERURLKEY:
+                web.ctx.status="400 Bad request"
+                return "key too short"
+            if len(userurlkey) > config.MAX_LEN_URLKEY:
+                web.ctx.status="400 Bad request"
+                return "key too long"
+            userurlkey = str.lower(utils.encode_string(userurlkey))
             
         url=utils.encode_string(url)
-        urlkey=utils.urlhash(url)
-        ret, n_affected = model.url_new(urlkey, url)
+        if False == utils.check_url(url):
+            web.ctx.status="400 Bad request"
+            return "bad url"
+            
+        ret, n_affected, urlkey = model.url_new(url, userurlkey)
         if ret != 0:
             return web.internalerror("db error")
 
-        if n_affected == 0:
-            web.ctx.status="200 OK"
-
-        if n_affected == 1:
-            web.ctx.status="201 Created"
-        return urlkey
+        retval = {
+            "is_created": (n_affected==1 or True and False),
+            "key": urlkey
+        }
+        web.ctx.status="200 OK"
+        return json.dumps(retval)
     
 class UrlRedirect:
     def GET(self, urlkey):
