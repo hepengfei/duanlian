@@ -51,6 +51,16 @@ def url_new(url, urlkey=None):
     except MySQLdb.Error as err:
         return get_errno(err), 0, None
 
+def url_modify(urlkey, url):
+    try:
+        affected = db.update('url', url=url,
+                             dt_created=web.SQLLiteral("NOW()"),
+                             where="urlkey=$urlkey",
+                             vars=locals())
+        return 0, affected
+    except MySQLdb.Error as err:
+        return get_errno(err), 0
+
 def url_get(urlkey):
     try:
         results = db.select('url', where='urlkey=$urlkey', vars=locals())
@@ -58,6 +68,14 @@ def url_get(urlkey):
             return 0, results[0].url
         else:
             return 0, None
+    except MySQLdb.Error as err:
+        return get_errno(err), None
+
+
+def url_list(offset, limit):
+    try:
+        results = db.select('url', offset=offset, limit=limit)
+        return 0, results
     except MySQLdb.Error as err:
         return get_errno(err), None
 
